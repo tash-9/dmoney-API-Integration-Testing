@@ -194,6 +194,101 @@
           "response": []
         },
         {
+          "name": "Merchant_Creation",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var randomId = _.random( 100000, 999999  );\r",
+                  "\r",
+                  "var phoneNumber = \"01701\" + randomId;\r",
+                  "\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"randomId\", randomId   );\r",
+                  "pm.collectionVariables.set(\"randomPhoneNumber\", phoneNumber   );\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Merchant Created Successfully\", function () {\r",
+                  "    pm.expect( jsonData.message ).to.contains(\"User created\");\r",
+                  "}    );\r",
+                  "\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "\r",
+                  " pm.response.to.have.status(201);\r",
+                  " \r",
+                  " }    );\r",
+                  "\r",
+                  " var id = jsonData.user.id; \r",
+                  " var email = jsonData.user.email;\r",
+                  " var phoneNumber = jsonData.user.phone_number;\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"merchantId\", id  );\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"merchantEmail\", email  );\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"merchantPhoneNumber\", phoneNumber  );\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admintoken}}",
+                "type": "text"
+              },
+              {
+                "key": "X-AUTH-SECRET-KEY",
+                "value": "{{secretKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"{{$randomFullName}}\",\r\n  \"email\": \"tashfia.islam102938+{{randomId}}@gmail.com\",\r\n  \"password\": \"1234\",\r\n  \"phone_number\": \"{{randomPhoneNumber}}\",\r\n  \"nid\": \"9877543210\",\r\n  \"role\": \"Merchant\"\r\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Customer1_Creation",
           "event": [
             {
@@ -586,6 +681,69 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Activate_Merchant",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admintoken}}",
+                "type": "text"
+              },
+              {
+                "key": "X-AUTH-SECRET-KEY",
+                "value": "{{secretKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n\r\n  \"status\": \"active\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/update/{{merchantId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "update",
+                "{{merchantId}}"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -920,7 +1078,7 @@
                   "\r",
                   "var token = jsonData.token;\r",
                   "\r",
-                  "pm.collectionVariables.set(\"agentToken\", token);"
+                  "pm.environment.set(\"agentToken\", token);"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -950,6 +1108,257 @@
             "body": {
               "mode": "raw",
               "raw": "{\r\n  \"identifier\": \"{{agentEmail}}\",\r\n  \"otp\": \"{{otp}}\"\r\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/verify-otp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "verify-otp"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Merchant_Login",
+      "item": [
+        {
+          "name": "Merchant_Primary_Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"{{merchantEmail}}\",\r\n  \r\n  \"password\": \"1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Gmail_List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let jsonData = pm.response.json();\r",
+                  "\r",
+                  "let latestEmailId = jsonData.messages[0].id;\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"emailId\", latestEmailId   );\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{gmailToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gmail.googleapis.com/gmail/v1/users/me/messages",
+              "protocol": "https",
+              "host": [
+                "gmail",
+                "googleapis",
+                "com"
+              ],
+              "path": [
+                "gmail",
+                "v1",
+                "users",
+                "me",
+                "messages"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Read Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let jsonData = pm.response.json();\r",
+                  "\r",
+                  "let snippet = jsonData.snippet;\r",
+                  "\r",
+                  "let otp = snippet.match(/\\b\\d{4}\\b/)[0];\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"otp\", otp);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{gmailToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://gmail.googleapis.com/gmail/v1/users/me/messages/{{emailId}}",
+              "protocol": "https",
+              "host": [
+                "gmail",
+                "googleapis",
+                "com"
+              ],
+              "path": [
+                "gmail",
+                "v1",
+                "users",
+                "me",
+                "messages",
+                "{{emailId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Merchant Verify OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"User can Login Successfully\", function () {\r",
+                  "    pm.expect(jsonData.message).to.contains(\"Login successful\");\r",
+                  "}    );\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  " pm.response.to.have.status(200);\r",
+                  " }    );\r",
+                  "\r",
+                  "var token = jsonData.token;\r",
+                  "\r",
+                  "pm.environment.set(\"merchantToken\", token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admintoken}}",
+                "type": "text"
+              },
+              {
+                "key": "X-AUTH-SECRET-KEY",
+                "value": "{{secretKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"identifier\": \"{{merchantEmail}}\",\r\n  \"otp\": \"{{otp}}\"\r\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/user/verify-otp",
@@ -1170,7 +1579,7 @@
                   "\r",
                   "var token = jsonData.token;\r",
                   "\r",
-                  "pm.collectionVariables.set(\"customer1_token\", token);"
+                  "pm.environment.set(\"customer1_token\", token);"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -1420,7 +1829,7 @@
                   "\r",
                   "var token = jsonData.token;\r",
                   "\r",
-                  "pm.collectionVariables.set(\"customer2_token\", token);"
+                  "pm.environment.set(\"customer2_token\", token);"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -1485,7 +1894,6 @@
                   "pm.test(\"Status code is 201\", function () {\r",
                   " pm.response.to.have.status(201);\r",
                   " }    );\r",
-                  "\r",
                   ""
                 ],
                 "type": "text/javascript",
@@ -1551,7 +1959,8 @@
                   "pm.test(\"Status code is 201\", function () {\r",
                   " pm.response.to.have.status(201);\r",
                   " }    );\r",
-                  ""
+                  "\r",
+                  "pm.environment.set(\"customer1Token\", pm.response.json().token);"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -1581,70 +1990,6 @@
             "body": {
               "mode": "raw",
               "raw": "{\r\n  \"from_account\": \"{{customer1_PhoneNumber}}\",\r\n  \"to_account\": \"{{customer2_PhoneNumber}}\",\r\n  \"amount\": 1000\r\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/transaction/sendmoney",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "transaction",
-                "sendmoney"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Customer Send Money To Self",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var jsonData = pm.response.json();",
-                  "",
-                  "pm.test(\"Cannot Be Same Message Shows Successfully\", function () {",
-                  "    pm.expect(jsonData.message).to.contains(\"cannot be the same\");",
-                  "});",
-                  "",
-                  "pm.test(\"Status code is 400\", function () {",
-                  "    pm.response.to.have.status(400);",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{customer1_token}}",
-                "type": "text"
-              },
-              {
-                "key": "X-AUTH-SECRET-KEY",
-                "value": "{{secretKey}}",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"from_account\": \"{{customer1_PhoneNumber}}\",\n  \"to_account\": \"{{customer1_PhoneNumber}}\",\n  \"amount\": 1000\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             },
             "url": {
               "raw": "{{baseUrl}}/transaction/sendmoney",
@@ -1701,30 +2046,14 @@
             }
           },
           "response": []
-        },
+        }
+      ]
+    },
+    {
+      "name": "Customer pay to Merchant",
+      "item": [
         {
-          "name": "Cashout THROUGH Non-Agent",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var jsonData = pm.response.json();",
-                  "",
-                  "pm.test(\"Not Agent Message Shows Successfully\", function () {",
-                  "    pm.expect(jsonData.message).to.contains(\"does not exist\");",
-                  "});",
-                  "",
-                  "pm.test(\"Status code is 404\", function () {",
-                  "    pm.response.to.have.status(404);",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
+          "name": "Customer pay to Merchant",
           "request": {
             "method": "POST",
             "header": [
@@ -1746,21 +2075,16 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"from_account\": \"{{customer2Phone}}\",\n  \"to_account\": \"{{customer1Phone}}\",\n  \"amount\": 100\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "raw": "{\r\n  \"from_account\": \"{{customer2_PhoneNumber}}\",\r\n  \"to_account\": \"{{merchantPhoneNumber}}\",\r\n  \"amount\": 400\r\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/transaction/withdraw",
+              "raw": "{{baseUrl}}/transaction/payment",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "transaction",
-                "withdraw"
+                "payment"
               ]
             }
           },
@@ -1796,87 +2120,103 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": ""
+      "value": "http://localhost:5000"
     },
     {
       "key": "secretKey",
-      "value": ""
+      "value": "ROADTOSDET"
     },
     {
       "key": "admintoken",
-      "value": ""
+      "secret": true
     },
     {
       "key": "randomId",
-      "value": ""
+      "value": 956591
     },
     {
       "key": "randomPhoneNumber",
-      "value": ""
+      "value": "01701956591"
     },
     {
       "key": "agentId",
-      "value": ""
+      "value": 139
     },
     {
       "key": "agentEmail",
-      "value": ""
+      "value": "tashfia.islam102938+196020@gmail.com"
     },
     {
       "key": "agentPhoneNumber",
-      "value": ""
+      "value": "01701196020"
     },
     {
       "key": "customer1_Id",
-      "value": ""
+      "value": 141
     },
     {
       "key": "customer1_Email",
-      "value": ""
+      "value": "tashfia.islam102938+315610@gmail.com"
     },
     {
       "key": "customer1_PhoneNumber",
-      "value": ""
+      "value": "01701315610"
+    },
+    {
+      "key": "merchantId",
+      "value": 140
+    },
+    {
+      "key": "merchantEmail",
+      "value": "tashfia.islam102938+356765@gmail.com"
+    },
+    {
+      "key": "merchantPhoneNumber",
+      "value": "01701356765"
     },
     {
       "key": "customer2_Id",
-      "value": ""
+      "value": 142
     },
     {
       "key": "customer2_Email",
-      "value": ""
+      "value": "tashfia.islam102938+956591@gmail.com"
     },
     {
       "key": "customer2_PhoneNumber",
-      "value": ""
+      "value": "01701956591"
     },
     {
       "key": "systemToken",
-      "value": ""
+      "secret": true
     },
     {
       "key": "emailId",
-      "value": ""
-    },
-    {
-      "key": "gmailToken",
-      "value": ""
+      "value": "19fbd5d87fc5a429"
     },
     {
       "key": "otp",
-      "value": ""
+      "value": "5895"
     },
     {
       "key": "agentToken",
-      "value": ""
+      "secret": true
+    },
+    {
+      "key": "merchantToken",
+      "secret": true
     },
     {
       "key": "customer1_token",
-      "value": ""
+      "secret": true
     },
     {
       "key": "customer2_token",
-      "value": ""
+      "secret": true
+    },
+    {
+      "key": "gmailToken",
+      "secret": true
     }
   ]
 }
