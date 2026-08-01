@@ -20,11 +20,13 @@ This project is a Postman-based API testing collection for the DMoney applicatio
 4. **Agent to Customer Deposit** — Agent deposits 2000 TK to a customer account
 5. **Customer to Customer Send Money** — Customer sends 1000 TK to another customer
 6. **Customer Cashout** — Another customer cashouts 500 TK from the agent
+7. **Cus**
 
 ## API Documentation:
 [Click Here to see the API Documentation](https://documenter.getpostman.com/view/54614618/2sBXqQHJsA)
 
 ### Report 
-<img width="975" height="931" alt="image" src="https://github.com/user-attachments/assets/f804e9ac-9975-4e37-8671-97d566f4d169" />
+<img width="418" height="398" alt="image" src="https://github.com/user-attachments/assets/cbe28318-0a3d-4021-b683-114c36316849" />
+
 
 
